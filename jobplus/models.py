@@ -17,6 +17,22 @@ class Base(db.Model):
 class User(Base):
     __tablename__ = 'user'
 
-
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(32), unique=True, nullable=False, index=True)
+    email = db.Column(db.String(64), unique=True, nullable=False, index=True)
+    _password = db.Column('password', db.String(256), nullable=False)
+    user_job = db.relationship('Job')
+    user_company = db.relationship('Company')
+
+    def __repr__(self):
+        return '<User:{}>'.format(self.username)
+
+class Job(Base):
+
+    __tablename__ = 'job'
+
+    id = db.Column(db.Integer, primary_key=True)
+    jobname = db.Column(db.String(64), unique=True, nullable=True, index=True)
+    salary_range = db.Column(db.Integer, nullable=False)
+    experience = db.Column(db.String(256), nullable=False)
+
