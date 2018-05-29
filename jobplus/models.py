@@ -126,35 +126,76 @@ class Job(Base):
     id = db.Column(db.Integer, primary_key=True)
     applicants_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
     applicants = db.relationship('User', uselist=False)
-    jobname = db.Column(db.String(64), unique=True, nullable=True, index=True)
-    salary_range = db.Column(db.Integer, nullable=False)
-    experience = db.Column(db.String(256), nullable=False)
-    job_location = db.Column(db.String(64), nullable=False)
+    name = db.Column(db.String(64))
+    #salary_range = db.Column(db.Integer, nullable=False)
+    salary_low = db.Column(db.Integer, nullable=False)
+    salary_high = db.Column(db.Integer, nullable=False)
+    experience_requirement = db.Column(db.String(256))
+    location = db.Column(db.String(64))
+    tags = db.Column(db.String(128))
+    degree_requirement = db.Column(db.String(32))
+    is_fulltime = db.Column(db.Boolean, default=True)
+
+    # 是否在招聘
+    is_open = db.Column(db.Boolean, default=True)
+    company_id = db.Column(db.Integer, db.ForeignKey('company.id', ondelete='CASCADE'))
+    company = db.relationship('Company', uselist=False)
+
     # job company relationship
     company_information = db.relationship('company')
     publish_time = db.Column(db.String(32), nullable=False)
     job_description = db.Column(db.String(256), nullable=False)
     job_requirement = db.Column(db.String(256), nullable=False)
+    views_count = db.Column(db.Integer, default=0)
 
     def __repr__(self):
-        return '<job:{}>'.format(self.jobname)
+        return '<Job:{}>'.format(self.jobname)
 
 # 企业表
 class Company(Base):
     __tablename__ = 'company'
 
     id = db.Column(db.Integer, primary_key=True)
-    job_id = db.Column(db.Integer, db.ForeignKey('job.id', ondelete='CASCADE'))
-    job = db.relationship('Job', uselist=False)
-
-    applicants_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    applicants = db.relationship('User', uselist=False, backref=db.backref('company', uselist=False) )
-    logo = db.Column(db.String(256), nullable=False)
     name = db.Column(db.String(64), unique=True, nullable=False, index=True)
+    slug = db.Column(db.String(24), unique=True, nullable=False, index=True)
+    logo = db.Column(db.String(256), nullable=False)
+    contact = db.Column(db.String(24), nullable=False)
+    email = db.Column(db.String(24), nullable=False)
     website = db.Column(db.String(64), nullable=False)
     description = db.Column(db.String(256))
     location = db.Column(db.String(32), nullable=False)
-    required_job_number = db.Column(db.Integer)
+    # 公司详情
+    about = db.Column(db.String(1024))
+    # 公司标签
+    tags = db.Column(db.String(128))
+    # 公司技术栈
+    stack = db.Column(db.String(128))
+    # 团队介绍
+    team_introduction = db.Column(db.String(256))
+    # 公司福利
+    welfares = db.Column(db.String(256))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='SET NULL'))
+    user = db.relationship('User', uselist=False,backref=db.backref('company', uselist=False))
+
 
     def __repr__(self):
         return '<Company {}>'.format(self.name)
+
+class Dilivery(Base):
+    __tablename__ = 'delivery'
+
+    # 企业审核
+    STATUS_WAITING = 1
+    # 被拒绝
+    STATUS_REJECT = 2
+    # 被接收,等面试
+    STATUS_ACCEPT = 3
+
+    id = db.Column(db.Integer, primary_key=True)
+    job_id = db.Column(db.Integer, db.ForeignKey('job.id', ondelete='SET NULL'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='SET NULL'))
+    status = db.Column(db.SmallInteger, default=STATUS_WAITING)
+
+    # 企业回应
+    response = db.Column(db.String(256))
+
