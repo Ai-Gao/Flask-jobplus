@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 from jobplus.config import configs
 from jobplus.models import db
+from flask_migrate import Migrate
 
 # create app 通过配置文件动态创建Flask app 工厂函数
 def create_app(config):
@@ -10,6 +11,9 @@ def create_app(config):
 
     # SQLAlchemy 初始化方式 init_app
     db.init_app(app)
+
+    # flask_migrate 注册app
+    Migrate(app, db)
 
     # 工厂函数调用蓝图注册函数
     register_blueprints(app)
