@@ -4,10 +4,13 @@
         <meta charset='UTF-8' />
         <meta name='viewport' content='width=device-width' />
         <title>{% block title %}{% endblock %}</title>
-        
+
+        {% block head_css %}
         <link rel='stylesheet' href='/static/main.css' type='text/css'>
-        
+
         <link rel='stylesheet' href='https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css'>
+
+        {% endblock %}
 
     </head>
 
@@ -24,19 +27,24 @@
                         <span class='icon-bar'></span>
                     </button>
 
-                    <a class='navbar-brand' href='#'>Jobplus</a>
+                    <a class='navbar-brand' href='/'>Jobplus</a>
                 </div>
 
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class='collapse navbar-collapse' id='bs-example-navbar-collapse-1'>
                     <ul class='nav navbar-nav'>
                         <li class='active'>
-                            <a href='#'>Link
+                            <a href='#'>职位
                                 <span class='sr-only'>(current)</span>
                             </a>
                         </li>
-                        <li><a href='#'>Link2</a></li>
+                        <li class='active'><a href='#'>公司
+                                <span class='sr=only'>(current)</span>
+                            </a></li>
 
+                            {% if current_user.is_authenticated and current_user.is_admin %}
+                            <li><a href='#'>控制台</a></li>
+                            {% endif %}
                     </ul>
 
                     <form class='navbar-form navbar-right' >
@@ -46,13 +54,19 @@
                         <button type='submit' class='btn btn-default'>Go</button>
                     </form>
                     <ul class='nav navbar-nav navbar-right'>
-                        <li><a href='#'>Link</a></li>
+                        {% if not current_user.is_authenticated %}
+
+                        <li><a href='#'>用户注册</a></li>
+                        <li><a href='#'>企业注册</a></li>
+                        <li><a href='{{url_for('front.login')}}'>登录</a></li>
+                        {% else %}
                         <li class='dropdown'>
-                            <a href='#' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'>Dropdown <span class='caret'></span></a>
+                            <a href='#' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'> drop<!--{{ current_user }}--><span class='caret'></span></a>
                             <ul class='dropdown-menu'>
-                                <li><a href='#'>Action</a></li>
-                                <li><a href='#'>Another action</a></li>
-                                <li><a href='#'>Something else here</a></li>
+                                <li><a href='#'>我的主页</a></li>
+                                <li role='separator' class='divider'></li>
+                                <li><a href='#'>退出登录</a></li>
+                                {% endif %}
                             </ul>
                         </li>
                     </ul>
@@ -60,15 +74,36 @@
             </div>
         </nav>
 
+        <!-- header -->
+        <div class='container-fluid header'>
+            {% block head %}
+            {% endblock %}
+        </div>
+
+        <div class='container'>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class='alert alert-{{ category }} alert-dismissible' role='alert'></div>
+            <button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times</span></button>
+            {{ message }}
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </div>
+
         {% block body %}
         {% endblock %}
 
         {% block footer %}
+        <div class='footer'> Copyright © 2018 </div>
         {% endblock %}
 
+        {% block tail_js %}
         <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
         <script src='https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js'></script>
         <script src='/static/main.js'></script>
+        {% endblock %}
     </body>
 
 </html>
