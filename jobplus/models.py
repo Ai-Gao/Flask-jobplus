@@ -33,6 +33,9 @@ class User(Base):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(32), unique=True, nullable=False, index=True)
+    realname = db.Column(db.String(32))
+    phone = db.Column(db.String(11))
+    work_years = db.Column(db.SmallInteger)
     email = db.Column(db.String(64), unique=True, nullable=False, index=True)
     _password = db.Column('password', db.String(256), nullable=False)
     user_job = db.relationship('Job', secondary=user_job)
@@ -41,7 +44,6 @@ class User(Base):
 
     # 根据用户在网站上填写的内容生成简历
     resume = db.relationship('Resume', uselist=False)
-    collect_jobs = db.relationship('Job', secondary=user_job)
 
     # 用户上传的简历或简历链接
     resume_url = db.Column(db.String(64))
