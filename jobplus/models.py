@@ -38,7 +38,16 @@ class User(Base):
     user_job = db.relationship('Job', secondary=user_job)
     role = db.Column(db.SmallInteger, default=ROLE_USER)
     #user_company = db.relationship('Company')
+
+    # 根据用户在网站上填写的内容生成简历
     resume = db.relationship('Resume', uselist=False)
+    collect_jobs = db.relationship('Job', secondary=user_job)
+
+    # 用户上传的简历或简历链接
+    resume_url = db.Column(db.String(64))
+
+    # 企业用户详情
+    detail = db.relationship('CompanyDetail', uselist=False)
 
     def __repr__(self):
         return '<User:{}>'.format(self.username)
@@ -70,12 +79,12 @@ class Resume(Base):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', uselist=False)
-
+    # 一对多
     job_experience = db.relationship('JobExperience')
     edu_experience = db.relationship('EduExperience')
     project_experience = db.relationship('ProjectExperience')
 
-# 经历表
+# 经验表
 class Experience(Base):
     __abstract__ = True
 
@@ -138,22 +147,22 @@ class Job(Base):
 
     # 是否在招聘
     is_open = db.Column(db.Boolean, default=True)
-    company_id = db.Column(db.Integer, db.ForeignKey('company.id', ondelete='CASCADE'))
-    company = db.relationship('Company', uselist=False)
+    company_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
+    company = db.relationship('User', uselist=False)
+    views_count = db.Column(db.Integer, default=0)
 
     # job company relationship
-    company_information = db.relationship('company')
-    publish_time = db.Column(db.String(32), nullable=False)
-    job_description = db.Column(db.String(256), nullable=False)
-    job_requirement = db.Column(db.String(256), nullable=False)
-    views_count = db.Column(db.Integer, default=0)
+    #company_information = db.relationship('company')
+    #publish_time = db.Column(db.String(32), nullable=False)
+    #job_description = db.Column(db.String(256), nullable=False)
+    #job_requirement = db.Column(db.String(256), nullable=False)
 
     def __repr__(self):
         return '<Job:{}>'.format(self.jobname)
 
 # 企业表
-class Company(Base):
-    __tablename__ = 'company'
+class CompanyDetail(Base):
+    __tablename__ = 'company_detail'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True, nullable=False, index=True)
@@ -175,11 +184,11 @@ class Company(Base):
     # 公司福利
     welfares = db.Column(db.String(256))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='SET NULL'))
-    user = db.relationship('User', uselist=False,backref=db.backref('company', uselist=False))
+    user = db.relationship('User', uselist=False,backref=db.backref('company_detail', uselist=False))
 
 
     def __repr__(self):
-        return '<Company {}>'.format(self.name)
+        return '<CompanyDetail {}>'.format(self.name)
 
 class Dilivery(Base):
     __tablename__ = 'delivery'
