@@ -184,7 +184,7 @@ class CompanyDetail(Base):
     # 公司福利
     welfares = db.Column(db.String(256))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='SET NULL'))
-    user = db.relationship('User', uselist=False,backref=db.backref('company_detail', uselist=False))
+    user = db.relationship('User', uselist=False, backref=db.backref('company_detail', uselist=False))
 
 
     def __repr__(self):

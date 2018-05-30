@@ -1,8 +1,8 @@
 """init database
 
-Revision ID: a4b0c3eaecb7
+Revision ID: 290ba631d1a3
 Revises: 
-Create Date: 2018-05-29 11:39:09.526671
+Create Date: 2018-05-30 17:28:24.984607
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'a4b0c3eaecb7'
+revision = '290ba631d1a3'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -26,26 +26,54 @@ def upgrade():
     sa.Column('email', sa.String(length=64), nullable=False),
     sa.Column('password', sa.String(length=256), nullable=False),
     sa.Column('role', sa.SmallInteger(), nullable=True),
+    sa.Column('resume_url', sa.String(length=64), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_user_email'), 'user', ['email'], unique=True)
     op.create_index(op.f('ix_user_username'), 'user', ['username'], unique=True)
+    op.create_table('company_detail',
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=64), nullable=False),
+    sa.Column('slug', sa.String(length=24), nullable=False),
+    sa.Column('logo', sa.String(length=256), nullable=False),
+    sa.Column('contact', sa.String(length=24), nullable=False),
+    sa.Column('email', sa.String(length=24), nullable=False),
+    sa.Column('website', sa.String(length=64), nullable=False),
+    sa.Column('description', sa.String(length=256), nullable=True),
+    sa.Column('location', sa.String(length=32), nullable=False),
+    sa.Column('about', sa.String(length=1024), nullable=True),
+    sa.Column('tags', sa.String(length=128), nullable=True),
+    sa.Column('stack', sa.String(length=128), nullable=True),
+    sa.Column('team_introduction', sa.String(length=256), nullable=True),
+    sa.Column('welfares', sa.String(length=256), nullable=True),
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ondelete='SET NULL'),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_company_detail_name'), 'company_detail', ['name'], unique=True)
+    op.create_index(op.f('ix_company_detail_slug'), 'company_detail', ['slug'], unique=True)
     op.create_table('job',
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('applicants_id', sa.Integer(), nullable=True),
-    sa.Column('jobname', sa.String(length=64), nullable=True),
-    sa.Column('salary_range', sa.Integer(), nullable=False),
-    sa.Column('experience', sa.String(length=256), nullable=False),
-    sa.Column('job_location', sa.String(length=64), nullable=False),
-    sa.Column('publish_time', sa.String(length=32), nullable=False),
-    sa.Column('job_description', sa.String(length=256), nullable=False),
-    sa.Column('job_requirement', sa.String(length=256), nullable=False),
+    sa.Column('name', sa.String(length=64), nullable=True),
+    sa.Column('salary_low', sa.Integer(), nullable=False),
+    sa.Column('salary_high', sa.Integer(), nullable=False),
+    sa.Column('experience_requirement', sa.String(length=256), nullable=True),
+    sa.Column('location', sa.String(length=64), nullable=True),
+    sa.Column('tags', sa.String(length=128), nullable=True),
+    sa.Column('degree_requirement', sa.String(length=32), nullable=True),
+    sa.Column('is_fulltime', sa.Boolean(), nullable=True),
+    sa.Column('is_open', sa.Boolean(), nullable=True),
+    sa.Column('company_id', sa.Integer(), nullable=True),
+    sa.Column('views_count', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['applicants_id'], ['user.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['company_id'], ['user.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_index(op.f('ix_job_jobname'), 'job', ['jobname'], unique=True)
     op.create_table('resume',
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
@@ -54,23 +82,18 @@ def upgrade():
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('company',
+    op.create_table('delivery',
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('job_id', sa.Integer(), nullable=True),
-    sa.Column('applicants_id', sa.Integer(), nullable=True),
-    sa.Column('logo', sa.String(length=256), nullable=False),
-    sa.Column('name', sa.String(length=64), nullable=False),
-    sa.Column('website', sa.String(length=64), nullable=False),
-    sa.Column('description', sa.String(length=256), nullable=True),
-    sa.Column('location', sa.String(length=32), nullable=False),
-    sa.Column('required_job_number', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['applicants_id'], ['user.id'], ),
-    sa.ForeignKeyConstraint(['job_id'], ['job.id'], ondelete='CASCADE'),
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.Column('status', sa.SmallInteger(), nullable=True),
+    sa.Column('response', sa.String(length=256), nullable=True),
+    sa.ForeignKeyConstraint(['job_id'], ['job.id'], ondelete='SET NULL'),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ondelete='SET NULL'),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_index(op.f('ix_company_name'), 'company', ['name'], unique=True)
     op.create_table('edu_experience',
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
@@ -127,11 +150,12 @@ def downgrade():
     op.drop_table('project_experience')
     op.drop_table('job_experience')
     op.drop_table('edu_experience')
-    op.drop_index(op.f('ix_company_name'), table_name='company')
-    op.drop_table('company')
+    op.drop_table('delivery')
     op.drop_table('resume')
-    op.drop_index(op.f('ix_job_jobname'), table_name='job')
     op.drop_table('job')
+    op.drop_index(op.f('ix_company_detail_slug'), table_name='company_detail')
+    op.drop_index(op.f('ix_company_detail_name'), table_name='company_detail')
+    op.drop_table('company_detail')
     op.drop_index(op.f('ix_user_username'), table_name='user')
     op.drop_index(op.f('ix_user_email'), table_name='user')
     op.drop_table('user')
