@@ -38,13 +38,12 @@
                                 <span class='sr-only'>(current)</span>
                             </a>
                         </li>
-                        <li class='active'><a href='#'>公司
-                                <span class='sr=only'>(current)</span>
+                        <li><a href='#'>公司
+                                <span class='sr-only'>(current)</span>
                             </a></li>
 
-                            {% if current_user.is_authenticated and current_user.is_admin %}
+
                             <li><a href='#'>控制台</a></li>
-                            {% endif %}
                     </ul>
 
                     <form class='navbar-form navbar-right' >
@@ -54,19 +53,16 @@
                         <button type='submit' class='btn btn-default'>Go</button>
                     </form>
                     <ul class='nav navbar-nav navbar-right'>
-                        {% if not current_user.is_authenticated %}
 
                         <li><a href='#'>用户注册</a></li>
                         <li><a href='#'>企业注册</a></li>
                         <li><a href='{{url_for('front.login')}}'>登录</a></li>
-                        {% else %}
                         <li class='dropdown'>
-                            <a href='#' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'> drop<!--{{ current_user }}--><span class='caret'></span></a>
+                            <a href='#' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false'> drop<span class='caret'></span></a>
                             <ul class='dropdown-menu'>
                                 <li><a href='#'>我的主页</a></li>
                                 <li role='separator' class='divider'></li>
                                 <li><a href='#'>退出登录</a></li>
-                                {% endif %}
                             </ul>
                         </li>
                     </ul>
@@ -96,7 +92,7 @@
         {% endblock %}
 
         {% block footer %}
-        <div class='footer'> Copyright © 2018 </div>
+        <div class='footer' id='foot'> <p>Copyright © 2018 </p></div>
         {% endblock %}
 
         {% block tail_js %}

@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 
 # 创建数据库ORM对象
 db = SQLAlchemy()
@@ -24,7 +25,7 @@ user_job = db.Table(
         )
 
 # 求职者表
-class User(Base):
+class User(Base, UserMixin):
     __tablename__ = 'user'
 
     ROLE_USER = 10

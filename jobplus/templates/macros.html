@@ -1,0 +1,30 @@
+<!-- macro 传入两个参数: 要渲染的表单和要跳转的路由 -->
+{% macro render_form(form, url) %}
+<div class='form'>
+    <form method='POST' action='{{ url }}' >
+
+        <!-- 将csrf_token 渲染在表单开始的位置 -->
+        {{ form.csrf_token }}
+
+        <!-- 迭代表单的 field -->
+        {% for field in form %}
+        {% if field.type == 'CSRFTokenField' %}
+        {{ '' }}
+        <!-- SubmitField -->
+        {% elif field.type == 'SubmitField' %}
+        {{ form.submit(class='btn btn-primary', type='submit') }}
+        <!-- BooleanField -->
+        {% elif field.type == 'BooleanField' %}
+        <div class='checkbox'>
+            <label>{{ field }} {{ field.label.text }}</label>
+        </div>
+        {% else %}
+        <div class='form-group'>
+            {{ field.label }} {{ field(class='form-control') }}
+        </div>
+        {% endif %}
+        {% endfor %}
+
+    </form>
+</div>
+{% endmacro %}
