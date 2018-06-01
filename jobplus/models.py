@@ -136,8 +136,8 @@ class Job(Base):
     __tablename__ = 'job'
 
     id = db.Column(db.Integer, primary_key=True)
-    applicants_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
-    applicants = db.relationship('User', uselist=False)
+    #applicants_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
+    #applicants = db.relationship('User', uselist=False)
     name = db.Column(db.String(64))
     #salary_range = db.Column(db.Integer, nullable=False)
     salary_low = db.Column(db.Integer, nullable=False)

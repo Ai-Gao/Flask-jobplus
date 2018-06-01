@@ -52,5 +52,10 @@ def register_extensions(app):
     # 当用户需要登入的时候 跳转到视图的名字
     login_manager.login_view = 'front.login'
 
-    # 当用户重定向到登入页面是的消息闪现
-    login_manager.login_message = 'success'
+    # 未登录的用户访问login_required保护的视图时,flask_login会闪现一条消息并重定向到登录视图
+    # 登录视图的名称为 login_manager.login_view
+    # 当用户重定向到登入页面时的消息闪现信息
+    login_manager.login_message='请登录'
+
+    # 当用户重定向到登入页面时的消息闪现类别
+    login_manager.login_message_category = 'success'
