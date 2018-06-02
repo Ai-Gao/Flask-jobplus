@@ -34,14 +34,13 @@ class User(Base, UserMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(32), unique=True, nullable=False, index=True)
-    realname = db.Column(db.String(32))
+    real_name = db.Column(db.String(32))
     phone = db.Column(db.String(11))
     work_years = db.Column(db.SmallInteger)
     email = db.Column(db.String(64), unique=True, nullable=False, index=True)
     _password = db.Column('password', db.String(256), nullable=False)
     user_job = db.relationship('Job', secondary=user_job)
     role = db.Column(db.SmallInteger, default=ROLE_USER)
-    #user_company = db.relationship('Company')
 
     # 根据用户在网站上填写的内容生成简历
     resume = db.relationship('Resume', uselist=False)
@@ -136,8 +135,11 @@ class Job(Base):
     __tablename__ = 'job'
 
     id = db.Column(db.Integer, primary_key=True)
-    #applicants_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
-    #applicants = db.relationship('User', uselist=False)
+
+    # *** 有问题　***
+    #user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
+    #user = db.relationship('User', uselist=False, foreign_keys='user.id')
+
     name = db.Column(db.String(64))
     #salary_range = db.Column(db.Integer, nullable=False)
     salary_low = db.Column(db.Integer, nullable=False)
@@ -150,8 +152,8 @@ class Job(Base):
 
     # 是否在招聘
     is_open = db.Column(db.Boolean, default=True)
-    company_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
-    company = db.relationship('User', uselist=False)
+    company_id = db.Column(db.Integer, db.ForeignKey('company_detail.id', ondelete='CASCADE'))
+    company = db.relationship('CompanyDetail', uselist=False)
     views_count = db.Column(db.Integer, default=0)
 
     # job company relationship
@@ -186,6 +188,8 @@ class CompanyDetail(Base):
     team_introduction = db.Column(db.String(256))
     # 公司福利
     welfares = db.Column(db.String(256))
+
+    # *** Q ***
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='SET NULL'))
     user = db.relationship('User', uselist=False, backref=db.backref('company_detail', uselist=False))
 

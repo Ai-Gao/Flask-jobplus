@@ -53,3 +53,11 @@ class LoginForm(FlaskForm):
         user = User.query.filter_by(username=self.username.data).first()
         if user and not user.check_password(field.data):
             raise ValidationError('密码错误')
+
+# 求职者个人信息配置表单
+class UserProfileForm(FlaskForm):
+    username = StringField('用户名', validators=[DataRequired(message='用户名不能为空'), Length(3,24, message='用户名长度要在3~24个字符之间')])
+    email=StringField('邮箱', validators=[DataRequired(message='邮箱不能为空'), Email(message='请输入合法的邮箱')])
+    password = PasswordField('密码', validators=[DataRequired(message='密码不能为空')])
+    phone = StringField('手机号', validators=[DataRequired(message='手机号不能为空', NumberRange(min=1))])
+

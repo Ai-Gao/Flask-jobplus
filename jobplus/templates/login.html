@@ -4,6 +4,8 @@
 {% block title %}Login{% endblock %}
 
 {% block body %}
-<h1>Login</h1>
-{{ render_form(form, url_for('front.login')) }}
+<div class='form'>
+    <h2>Login</h2>
+    {{ render_form(form, url_for('front.login')) }}
+</div>
 {% endblock %}
